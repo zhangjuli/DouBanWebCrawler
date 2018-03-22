@@ -9,8 +9,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class GetUrls {
-    private static String urlFront = null;
-    private static String tag = null;
+    private static String urlFront = null;      // Url front part String
+    private static String tag = null;           // tag of the Books
     private static Url urls = null;
 
     public GetUrls(String urlFront, String tag){
@@ -54,15 +54,15 @@ public class GetUrls {
             return urlList;
         }
         public void addList(int page){
-            lock.lock();
+            lock.lock();                    // lock the write
             try{
-                String url = urlFront +"tag/" + tag + "?start="+ String.valueOf(page) + "&type=S";
-//              Thread.sleep(5);
+                String url = urlFront +"tag/" + tag + "?start="+ String.valueOf(page) + "&type=S";       // get the whole url
+                //Thread.sleep(5);
                 urlList.add(url);       
             }catch(Exception ex ){
             }
             finally {
-                lock.unlock();        
+                lock.unlock();             // unlock it
             }
 
         }
@@ -72,9 +72,12 @@ public class GetUrls {
         String tag = "%E7%BC%96%E7%A8%8B";
         GetUrls myThreading = new GetUrls(urlFront, tag);
         List <String> urlList = myThreading.getUriList();
+        
+        // print all the urls
         for(String url : urlList){
             System.out.println(url);
         }
+        // check the amount of the urls
         System.out.println(urlList.size());
     }
 }

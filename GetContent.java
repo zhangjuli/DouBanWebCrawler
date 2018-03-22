@@ -19,7 +19,7 @@ public class GetContent {
 	
     private static Content content = null;
     private static List<String> urlList = null;
-    private static List<Book> books = new ArrayList<Book>();
+    private static List<Book> books = new ArrayList<Book>();    // books List
 
     public GetContent(List<String> urlList){
         this.urlList = urlList;
@@ -57,6 +57,8 @@ public class GetContent {
             try{
                 URL realUrl = new URL(url);
                 URLConnection connection = realUrl.openConnection();
+                
+                // get the HTML string of each url, write into the content
                 in = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
                 String line;
                 while( (line = in.readLine()) != null){
@@ -74,8 +76,12 @@ public class GetContent {
                     e2.printStackTrace();
                 }
             }
+            
+            // delete all the blank and /n of the HTML String
             content = content.replaceAll("/n", "");
             content = content.replaceAll(" ", "");
+            
+            // Re algorithm get the subject-item of each book
             Pattern p = Pattern.compile("<liclass=\"subject-item\">.+?</li>");
             Matcher match = p.matcher(content);
             String tmp;
@@ -83,6 +89,8 @@ public class GetContent {
             while(match.find()){
                 tmp = match.group();
                 Book cur = convertBook(tmp);
+                
+                // make sure the book which comments are more than 1000 and ranks is on top 40 can be recored.
                 if(cur.pl >= 1000 && books.size() < 40){
                 	books.add(convertBook(tmp));
                 }
@@ -96,6 +104,8 @@ public class GetContent {
            lock.unlock();
 
         }
+        
+        // convert the book String into Book class
         private Book convertBook(String input){
         	//System.out.println(input);
         	Book current = new Book(null, 0, 0, null, null, null, null);
@@ -144,7 +154,8 @@ public class GetContent {
         List <String> urlList = myThreading.getUriList();
         GetContent threadingCrawel = new GetContent(urlList);
         List <Book> books = threadingCrawel.getBooks();
-        //System.out.println(books.size());
+        
+        // sort the book with Ranks
         Collections.sort(books, new Comparator<Book>(){
         	@Override
         	public int compare(Book a, Book b){
@@ -154,12 +165,15 @@ public class GetContent {
         		return a.rank < b.rank ? 1 : -1;
         	}
         });
-//        for(Book book : books){
-//        	System.out.println(book.name);
-//        	System.out.println(book.rank);
-//        }
-        System.out.println(books.size());
+        
+        // print the book name and rank to check the result
+        for(Book book : books){
+        	System.out.println(book.name);
+        	System.out.println(book.rank);
+        }
         long end = System.currentTimeMillis();
+        
+        // record the program run time
         System.out.println(end - start);
     }
 }

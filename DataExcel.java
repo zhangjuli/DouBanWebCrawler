@@ -11,6 +11,8 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;  
 import jxl.write.Number;  
 public class DataExcel {
+	
+	// get all results of top 40 books
 	public List<Book> getBooks(){
 		String urlFront = "https://book.douban.com/";
         String tag = "%E7%BC%96%E7%A8%8B";
@@ -18,7 +20,7 @@ public class DataExcel {
         List <String> urlList = myThreading.getUriList();
         GetContent threadingCrawel = new GetContent(urlList);
         List <Book> books = threadingCrawel.getBooks();
-        //System.out.println(books.size());
+        
         Collections.sort(books, new Comparator<Book>(){
         	@Override
         	public int compare(Book a, Book b){
@@ -34,6 +36,7 @@ public class DataExcel {
     	DataExcel excel = new DataExcel();
     	List<Book> doubanBooks = excel.getBooks();
     	
+    	// write the data into excel using JXL
         try {  
              
             WritableWorkbook book = Workbook.createWorkbook(new File(  
